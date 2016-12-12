@@ -25,4 +25,21 @@ export default class App extends Component {
 }
 
 
-const About = () => <h2>About</h2>
+class About extends Component {
+    
+    
+    componentWillMount() {
+        store.dispatch(fetchData());
+    }
+    
+    
+    render() {
+        const { name } = store.getState();
+
+        return (<div>
+            <h1>App</h1>
+            { name }
+            <br/>
+        </div>)
+    }
+}
