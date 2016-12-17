@@ -11,20 +11,31 @@ let initialState = {
 }
 
 function rootReducer(state = initialState, action) {
-    return action.payload;
+    switch(action.type) {
+        case 'FETCH_SUCCESS':
+            return Object.assign({}, {data: action.payload}, state);
+        case 'FETCH_SIMLE_SUCCESS':
+            return Object.assign({}, {simpleData: action.payload}, state);
+        default:
+            return state;
+    }
 }
 
-export function fetchData(store) {
-    console.log("fetchData");
-    return async (dispatch) => {
+export function fetchData(user) {
 
-        await fetch('https://api.github.com/users/nithinpeter')
+    return (dispatch) => {
+
+        return fetch(`https://api.github.com/users/${user}`)
             .then(res => res.json())
             .then(data => {
-                console.log(data);
                 dispatch({ type: 'FETCH_SUCCESS', payload: data })
             })
     }
+}
+
+
+export function fetchSimpleData(data) {
+    return { type: 'FETCH_SIMLE_SUCCESS', payload: data };
 }
 
 export default store;

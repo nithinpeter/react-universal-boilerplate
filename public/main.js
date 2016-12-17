@@ -29487,7 +29487,8 @@
 	        key: 'render',
 	        value: function render() {
 	            var _store$getState = _store2.default.getState(),
-	                name = _store$getState.name;
+	                data = _store$getState.data,
+	                simpleData = _store$getState.simpleData;
 
 	            return _react2.default.createElement(
 	                'div',
@@ -29497,7 +29498,9 @@
 	                    null,
 	                    'App'
 	                ),
-	                name,
+	                data.name,
+	                _react2.default.createElement('br', null),
+	                simpleData,
 	                _react2.default.createElement('br', null),
 	                _react2.default.createElement(
 	                    _Link2.default,
@@ -29526,7 +29529,7 @@
 	    _createClass(About, [{
 	        key: 'componentWillMount',
 	        value: function componentWillMount() {
-	            _store2.default.dispatch((0, _store.fetchData)());
+	            // store.dispatch(fetchData());
 	        }
 	    }, {
 	        key: 'render',
@@ -29561,6 +29564,7 @@
 	    value: true
 	});
 	exports.fetchData = fetchData;
+	exports.fetchSimpleData = fetchSimpleData;
 
 	var _redux = __webpack_require__(476);
 
@@ -29574,8 +29578,6 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
-
 	var store = (0, _redux.createStore)(rootReducer, (0, _redux.applyMiddleware)(_reduxThunk2.default));
 
 	var initialState = {};
@@ -29584,39 +29586,30 @@
 	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
 	    var action = arguments[1];
 
-	    return action.payload;
+	    switch (action.type) {
+	        case 'FETCH_SUCCESS':
+	            return Object.assign({}, { data: action.payload }, state);
+	        case 'FETCH_SIMLE_SUCCESS':
+	            return Object.assign({}, { simpleData: action.payload }, state);
+	        default:
+	            return state;
+	    }
 	}
 
-	function fetchData(store) {
-	    var _this = this;
+	function fetchData(user) {
 
-	    console.log("fetchData");
-	    return function () {
-	        var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(dispatch) {
-	            return regeneratorRuntime.wrap(function _callee$(_context) {
-	                while (1) {
-	                    switch (_context.prev = _context.next) {
-	                        case 0:
-	                            _context.next = 2;
-	                            return (0, _isomorphicFetch2.default)('https://api.github.com/users/nithinpeter').then(function (res) {
-	                                return res.json();
-	                            }).then(function (data) {
-	                                console.log(data);
-	                                dispatch({ type: 'FETCH_SUCCESS', payload: data });
-	                            });
+	    return function (dispatch) {
 
-	                        case 2:
-	                        case 'end':
-	                            return _context.stop();
-	                    }
-	                }
-	            }, _callee, _this);
-	        }));
+	        return (0, _isomorphicFetch2.default)('https://api.github.com/users/' + user).then(function (res) {
+	            return res.json();
+	        }).then(function (data) {
+	            dispatch({ type: 'FETCH_SUCCESS', payload: data });
+	        });
+	    };
+	}
 
-	        return function (_x2) {
-	            return _ref.apply(this, arguments);
-	        };
-	    }();
+	function fetchSimpleData(data) {
+	    return { type: 'FETCH_SIMLE_SUCCESS', payload: data };
 	}
 
 	exports.default = store;

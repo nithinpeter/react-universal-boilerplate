@@ -12,12 +12,14 @@ export default class App extends Component {
     
     
     render() {
-        const { name } = store.getState();
+        const { data, simpleData } = store.getState();
 
         return (<div>
             <h1>App</h1>
-            { name }
+            { data.name }
             <br/>
+            { simpleData }
+            <br/>  
             <Link to="/about">About</Link>
             <Match pattern="/about" component={About} />
         </div>)
@@ -29,7 +31,7 @@ class About extends Component {
     
     
     componentWillMount() {
-        store.dispatch(fetchData());
+        // store.dispatch(fetchData());
     }
     
     
